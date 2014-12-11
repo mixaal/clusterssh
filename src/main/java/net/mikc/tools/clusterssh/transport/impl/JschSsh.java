@@ -28,18 +28,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Observable;
-import net.mikc.tools.clusterssh.transport.RemoteSession;
 import net.mikc.tools.clusterssh.exceptions.ConnectionException;
 import net.mikc.tools.clusterssh.gui.dialogs.Alert;
 import net.mikc.tools.clusterssh.gui.dialogs.AskPassword;
 import net.mikc.tools.clusterssh.gui.dialogs.PromptYesNo;
 import net.mikc.tools.clusterssh.transport.Channel;
+import net.mikc.tools.clusterssh.transport.Receiver;
+import net.mikc.tools.clusterssh.transport.RemoteSession;
 
 /**
  *
  * @author mikc
  */
-public class JschSsh extends Observable implements Channel {
+public class JschSsh implements Channel {
 
     private Session session;
     private com.jcraft.jsch.Channel channel;
@@ -47,6 +48,7 @@ public class JschSsh extends Observable implements Channel {
     private final RemoteSession remoteSession;
     //private final InputStream channelIn;
     private OutputStream channelOut;
+    private final Receiver receiver;
 
     public class ReadDataFromChannel implements Runnable {
 
@@ -78,9 +80,16 @@ public class JschSsh extends Observable implements Channel {
         }
     }
 
-    public JschSsh(final RemoteSession remoteSession) {
+    /**
+     * Create a secure channel from a session and specify a controller receiver.
+     *
+     * @param remoteSession
+     * @param receiver
+     */
+    public JschSsh(final RemoteSession remoteSession, final Receiver receiver) {
         this.jsch = new JSch();
         this.remoteSession = remoteSession;
+        this.receiver = receiver;
     }
 
     @Override
@@ -111,8 +120,7 @@ public class JschSsh extends Observable implements Channel {
 
     @Override
     public void onDataArrival(final String data) {
-        setChanged();
-        notifyObservers(data);
+        receiver.receive(data);
     }
 
     @Override

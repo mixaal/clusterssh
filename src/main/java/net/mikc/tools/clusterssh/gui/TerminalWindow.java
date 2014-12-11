@@ -23,7 +23,7 @@ import net.mikc.tools.clusterssh.gui.domain.Appearance;
 import java.util.Observable;
 import java.util.Observer;
 import net.mikc.tools.clusterssh.config.Config;
-import net.mikc.tools.clusterssh.transport.Channel;
+import net.mikc.tools.clusterssh.transport.Receiver;
 
 /**
  *
@@ -77,7 +77,7 @@ public final class TerminalWindow extends TextAreaWindow implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        if (o instanceof Channel && arg instanceof String) {
+        if (o instanceof Receiver && arg instanceof String) {
             final String output = (String) arg;
             appendText(output);
         }

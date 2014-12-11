@@ -26,16 +26,18 @@ import java.util.Observable;
 import java.util.Observer;
 import net.mikc.tools.clusterssh.exceptions.ConnectionException;
 import net.mikc.tools.clusterssh.transport.Channel;
+import net.mikc.tools.clusterssh.transport.Receiver;
+import net.mikc.tools.clusterssh.transport.Sender;
 
 /**
  *
  * @author mikc
  */
-public class CommHandler implements Observer {
+public class CommSender implements Observer, Sender {
 
     private final List<Channel> channels = new ArrayList<>();
 
-    public CommHandler() {
+    public CommSender() {
     }
 
     public void addChannel(final Channel channel) {
@@ -48,7 +50,8 @@ public class CommHandler implements Observer {
         }
     }
 
-    private void send(final String command) {
+    @Override
+    public void send(final String command) {
         try {
             for (final Channel channel : channels) {
                 channel.writeToChannel(command);

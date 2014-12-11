@@ -26,6 +26,7 @@ import net.mikc.tools.clusterssh.exceptions.ConnectionException;
 import net.mikc.tools.clusterssh.gui.dialogs.Alert;
 import net.mikc.tools.clusterssh.gui.InputWindow;
 import net.mikc.tools.clusterssh.gui.TerminalWindow;
+import net.mikc.tools.clusterssh.transport.Receiver;
 import net.mikc.tools.clusterssh.transport.impl.JschSsh;
 
 /**
@@ -36,14 +37,14 @@ public class AppInitializer {
 
     public AppInitializer() {
         try {
-            CommHandler commHandler = new CommHandler();
+            CommSender sender = new CommSender();
 
             // Input Terminal Window
             InputWindow input = new InputWindow();
 
             // Register link between the CommHandler and input window
             Observable inputController = input.getObservable();
-            inputController.addObserver(commHandler);
+            inputController.addObserver(sender);
 
             for (RemoteSession session : Config.SessionList.get()) {
                 // Terminal output windows
@@ -55,13 +56,13 @@ public class AppInitializer {
                 );
 
                 // Register output terminals as observers.
-                //commHandler.addObserver(window);
-                final JschSsh transportHandler = new JschSsh(session);
-                transportHandler.addObserver(window);
-                commHandler.addChannel(transportHandler);
+                final CommReceiver receiver = new CommReceiver();
+                final JschSsh transportHandler = new JschSsh(session, receiver);
+                receiver.addObserver(window);
+                sender.addChannel(transportHandler);
             }
 
-            commHandler.connect();
+            sender.connect();
         } catch (ConnectionException ex) {
             new Alert(ex.getLocalizedMessage()).display();
             System.exit(-1);

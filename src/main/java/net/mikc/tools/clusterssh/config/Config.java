@@ -45,8 +45,10 @@ public class Config {
     public static class SessionList {
 
         private static final Collection<RemoteSession> sessions = Arrays.asList(
-                new RemoteSession("mikc", "secretpassword", "myhost"),
-                new RemoteSession("root", null, "myhost") // ask for password
+                //new RemoteSession("mikc", "secretpassword", "myhost"),
+                //new RemoteSession("root", null, "myhost") // ask for password
+                new RemoteSession("mikc", "baficekmujmaly8+eUnis2", "vellum.cz"),
+                new RemoteSession("mikc", "baficekmujmaly8+eUnis2", "vellum.cz")
         );
 
         public static Collection<RemoteSession> get() {
