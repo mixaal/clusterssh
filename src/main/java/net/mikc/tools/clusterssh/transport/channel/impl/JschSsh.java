@@ -17,8 +17,9 @@
  *   with this program; if not, write to the Free Software Foundation, Inc.,
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package net.mikc.tools.clusterssh.transport.impl;
+package net.mikc.tools.clusterssh.transport.channel.impl;
 
+import com.google.common.eventbus.EventBus;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
@@ -27,13 +28,12 @@ import com.jcraft.jsch.UserInfo;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Observable;
+import net.mikc.tools.clusterssh.events.OutputTerminalDataEvent;
 import net.mikc.tools.clusterssh.exceptions.ConnectionException;
 import net.mikc.tools.clusterssh.gui.dialogs.Alert;
 import net.mikc.tools.clusterssh.gui.dialogs.AskPassword;
 import net.mikc.tools.clusterssh.gui.dialogs.PromptYesNo;
-import net.mikc.tools.clusterssh.transport.Channel;
-import net.mikc.tools.clusterssh.transport.Receiver;
+import net.mikc.tools.clusterssh.transport.channel.Channel;
 import net.mikc.tools.clusterssh.transport.RemoteSession;
 
 /**
@@ -48,7 +48,7 @@ public class JschSsh implements Channel {
     private final RemoteSession remoteSession;
     //private final InputStream channelIn;
     private OutputStream channelOut;
-    private final Receiver receiver;
+    private final EventBus messageBus;
 
     public class ReadDataFromChannel implements Runnable {
 
@@ -86,10 +86,10 @@ public class JschSsh implements Channel {
      * @param remoteSession
      * @param receiver
      */
-    public JschSsh(final RemoteSession remoteSession, final Receiver receiver) {
+    public JschSsh(final RemoteSession remoteSession, final EventBus messageBus) {
         this.jsch = new JSch();
         this.remoteSession = remoteSession;
-        this.receiver = receiver;
+        this.messageBus = messageBus;
     }
 
     @Override
@@ -120,7 +120,7 @@ public class JschSsh implements Channel {
 
     @Override
     public void onDataArrival(final String data) {
-        receiver.receive(data);
+        messageBus.post(new OutputTerminalDataEvent<>(data));
     }
 
     @Override

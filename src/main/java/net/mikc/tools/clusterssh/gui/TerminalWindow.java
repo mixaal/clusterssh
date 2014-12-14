@@ -19,17 +19,16 @@
  */
 package net.mikc.tools.clusterssh.gui;
 
-import net.mikc.tools.clusterssh.gui.domain.Appearance;
-import java.util.Observable;
-import java.util.Observer;
+import com.google.common.eventbus.Subscribe;
 import net.mikc.tools.clusterssh.config.Config;
-import net.mikc.tools.clusterssh.transport.Receiver;
+import net.mikc.tools.clusterssh.events.OutputTerminalDataEvent;
+import net.mikc.tools.clusterssh.gui.domain.Appearance;
 
 /**
  *
  * @author mikc
  */
-public final class TerminalWindow extends TextAreaWindow implements Observer {
+public final class TerminalWindow extends TextAreaWindow {
 
     private final String title;
     private final String host, user;
@@ -75,10 +74,11 @@ public final class TerminalWindow extends TextAreaWindow implements Observer {
         return this.title;
     }
 
-    @Override
-    public void update(Observable o, Object arg) {
-        if (o instanceof Receiver && arg instanceof String) {
-            final String output = (String) arg;
+    @Subscribe
+    public <T extends Object> void onDataArrival(OutputTerminalDataEvent<T> evt) {
+        final T payload = evt.getPayload();
+        if (payload instanceof String) {
+            final String output = (String) payload;
             appendText(output);
         }
     }

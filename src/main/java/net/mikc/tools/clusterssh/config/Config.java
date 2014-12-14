@@ -19,9 +19,10 @@
  */
 package net.mikc.tools.clusterssh.config;
 
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableSet;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.util.Arrays;
 import java.util.Collection;
 import net.mikc.tools.clusterssh.gui.domain.Appearance;
 import net.mikc.tools.clusterssh.transport.RemoteSession;
@@ -44,9 +45,8 @@ public class Config {
 
     public static class SessionList {
 
-        private static final Collection<RemoteSession> sessions = Arrays.asList(
-                new RemoteSession("mikc", "secretpassword", "myhost"),
-                new RemoteSession("root", null, "myhost") // ask for password
+        private static final ImmutableCollection<RemoteSession> sessions = ImmutableSet.of(
+                new RemoteSession("mikc", null, "localhost")
         );
 
         public static Collection<RemoteSession> get() {

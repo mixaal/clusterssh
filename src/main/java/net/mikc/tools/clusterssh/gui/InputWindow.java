@@ -19,16 +19,16 @@
  */
 package net.mikc.tools.clusterssh.gui;
 
+import com.google.common.eventbus.EventBus;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.util.Observable;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 import net.mikc.tools.clusterssh.config.Config;
-import net.mikc.tools.clusterssh.controller.InputWindowObservable;
+import net.mikc.tools.clusterssh.events.InputWindowEvent;
 
 /**
  *
@@ -38,9 +38,9 @@ public class InputWindow extends TextAreaWindow {
 
     private static final String PROMPT_TITLE = "Input Prompt";
 
-    private final InputWindowObservable inputController = new InputWindowObservable();
+    private final EventBus messageBus;
 
-    public InputWindow() {
+    public InputWindow(final EventBus messageBus) {
         super(
                 PROMPT_TITLE,
                 Config.LookAndFeel.INPUT_WINDOW_SIZE.width,
@@ -48,6 +48,7 @@ public class InputWindow extends TextAreaWindow {
                 true,
                 false
         );
+        this.messageBus = messageBus;
 
         setAppearance(Config.LookAndFeel.INPUT_APPEARANCE);
         InputMap inputMap = textArea.getInputMap(JComponent.WHEN_FOCUSED);
@@ -68,8 +69,7 @@ public class InputWindow extends TextAreaWindow {
             public void actionPerformed(ActionEvent e) {
                 final String userText = textArea.getText();
                 textArea.setText("");
-                inputController.setChanged();
-                inputController.notifyObservers(userText);
+                messageBus.post(new InputWindowEvent(userText, e));
             }
 
         });
@@ -84,14 +84,4 @@ public class InputWindow extends TextAreaWindow {
         });
 
     }
-
-    /**
-     * Get the observable object.
-     *
-     * @return
-     */
-    public Observable getObservable() {
-        return inputController;
-    }
-
 }

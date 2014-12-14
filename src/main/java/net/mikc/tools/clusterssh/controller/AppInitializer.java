@@ -19,15 +19,18 @@
  */
 package net.mikc.tools.clusterssh.controller;
 
-import java.util.Observable;
+import net.mikc.tools.clusterssh.databus.MessageBus;
+import net.mikc.tools.clusterssh.transport.pump.impl.ChannelSender;
+import com.google.common.eventbus.EventBus;
 import net.mikc.tools.clusterssh.config.Config;
-import net.mikc.tools.clusterssh.transport.RemoteSession;
 import net.mikc.tools.clusterssh.exceptions.ConnectionException;
-import net.mikc.tools.clusterssh.gui.dialogs.Alert;
 import net.mikc.tools.clusterssh.gui.InputWindow;
 import net.mikc.tools.clusterssh.gui.TerminalWindow;
-import net.mikc.tools.clusterssh.transport.Receiver;
-import net.mikc.tools.clusterssh.transport.impl.JschSsh;
+import net.mikc.tools.clusterssh.gui.dialogs.Alert;
+import net.mikc.tools.clusterssh.transport.channel.Channel;
+import net.mikc.tools.clusterssh.transport.RemoteSession;
+import net.mikc.tools.clusterssh.transport.channel.ChannelFactory;
+import net.mikc.tools.clusterssh.transport.channel.impl.JschSsh;
 
 /**
  *
@@ -36,17 +39,25 @@ import net.mikc.tools.clusterssh.transport.impl.JschSsh;
 public class AppInitializer {
 
     public AppInitializer() {
+
         try {
-            CommSender sender = new CommSender();
+            // create an event bus for the input window
+            final EventBus inputMessageBus = MessageBus.get();
 
-            // Input Terminal Window
-            InputWindow input = new InputWindow();
+            // sends the data to all channels
+            ChannelSender sender = new ChannelSender();
 
-            // Register link between the CommHandler and input window
-            Observable inputController = input.getObservable();
-            inputController.addObserver(sender);
+            // Connect input terminal window to the input message bus
+            InputWindow input = new InputWindow(inputMessageBus);
 
+            // Register sender on the input message bus
+            inputMessageBus.register(sender);
+
+            // Create output terminal windows
             for (RemoteSession session : Config.SessionList.get()) {
+                // For each remote session create a separate message bus
+                final EventBus sessionMessageBus = MessageBus.get();
+
                 // Terminal output windows
                 final TerminalWindow window = new TerminalWindow(
                         session.getHost(),
@@ -55,13 +66,17 @@ public class AppInitializer {
                         Config.LookAndFeel.TERMINAL_WINDOW_SIZE.height
                 );
 
-                // Register output terminals as observers.
-                final CommReceiver receiver = new CommReceiver();
-                final JschSsh transportHandler = new JschSsh(session, receiver);
-                receiver.addObserver(window);
+                // Register output terminals on the session message bus
+                sessionMessageBus.register(window);
+
+                // create transport channel with the message bus
+                final Channel transportHandler = ChannelFactory.newChannel(session, sessionMessageBus);
+
+                // connect sender with the channels - use MessageBus!
                 sender.addChannel(transportHandler);
             }
 
+            // and finally establish the connection
             sender.connect();
         } catch (ConnectionException ex) {
             new Alert(ex.getLocalizedMessage()).display();

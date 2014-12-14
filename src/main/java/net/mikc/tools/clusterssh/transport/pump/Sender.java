@@ -15,21 +15,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package net.mikc.tools.clusterssh.controller;
+package net.mikc.tools.clusterssh.transport.pump;
 
-import java.util.Observable;
-import net.mikc.tools.clusterssh.transport.Receiver;
+import com.google.common.eventbus.EventBus;
 
 /**
  *
  * @author mikc
  */
-public class CommReceiver extends Observable implements Receiver {
+public interface Sender {
 
-    @Override
-    public void receive(final String data) {
-        setChanged();
-        notifyObservers(data);
-    }
+    void send(final String data);
 
 }

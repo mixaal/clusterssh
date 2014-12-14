@@ -15,14 +15,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package net.mikc.tools.clusterssh.transport;
+package net.mikc.tools.clusterssh.transport.channel;
+
+import com.google.common.eventbus.EventBus;
+import net.mikc.tools.clusterssh.transport.RemoteSession;
+import net.mikc.tools.clusterssh.transport.channel.impl.JschSsh;
 
 /**
  *
  * @author mikc
  */
-public interface Receiver {
+public final class ChannelFactory {
 
-    void receive(final String data);
-
+    public static Channel newChannel(final RemoteSession session, final EventBus bus) {
+        return new JschSsh(session, bus);
+    }
 }

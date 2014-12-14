@@ -17,27 +17,27 @@
  *   with this program; if not, write to the Free Software Foundation, Inc.,
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package net.mikc.tools.clusterssh.controller;
+package net.mikc.tools.clusterssh.transport.pump.impl;
 
+import net.mikc.tools.clusterssh.transport.pump.Sender;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
+import net.mikc.tools.clusterssh.events.InputWindowEvent;
 import net.mikc.tools.clusterssh.exceptions.ConnectionException;
-import net.mikc.tools.clusterssh.transport.Channel;
-import net.mikc.tools.clusterssh.transport.Receiver;
-import net.mikc.tools.clusterssh.transport.Sender;
+import net.mikc.tools.clusterssh.transport.channel.Channel;
 
 /**
  *
  * @author mikc
  */
-public class CommSender implements Observer, Sender {
+public class ChannelSender implements Sender {
 
     private final List<Channel> channels = new ArrayList<>();
 
-    public CommSender() {
+    public ChannelSender() {
     }
 
     public void addChannel(final Channel channel) {
@@ -61,12 +61,10 @@ public class CommSender implements Observer, Sender {
         }
     }
 
-    @Override
-    public void update(Observable o, Object arg) {
-        if (o instanceof InputWindowObservable && arg instanceof String) {
-            final String commandToExecute = (String) arg;
-            send(commandToExecute);
-        }
+    @Subscribe
+    public void onTerminalInput(final InputWindowEvent evt) {
+        final String commandToExecute = evt.getText();
+        send(commandToExecute);
     }
 
 }

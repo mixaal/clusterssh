@@ -17,18 +17,24 @@
  *   with this program; if not, write to the Free Software Foundation, Inc.,
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package net.mikc.tools.clusterssh.controller;
+package net.mikc.tools.clusterssh.transport.channel;
 
-import java.util.Observable;
+import com.google.common.eventbus.EventBus;
+import java.io.IOException;
+import net.mikc.tools.clusterssh.exceptions.ConnectionException;
 
 /**
  *
  * @author mikc
  */
-public class InputWindowObservable extends Observable {
+public interface Channel {
 
-    @Override
-    public void setChanged() {
-        super.setChanged();
-    }
+    void connect() throws ConnectionException;
+
+    void writeToChannel(final String command) throws IOException;
+
+    void disconnect();
+
+    void onDataArrival(final String data);
+
 }

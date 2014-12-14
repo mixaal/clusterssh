@@ -15,14 +15,30 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package net.mikc.tools.clusterssh.transport;
+package net.mikc.tools.clusterssh.events;
+
+import java.awt.event.ActionEvent;
 
 /**
  *
  * @author mikc
  */
-public interface Sender {
+public final class InputWindowEvent {
 
-    void send(final String data);
+    private final String text;
+    private final ActionEvent event;
+
+    public InputWindowEvent(final String text, final ActionEvent event) {
+        this.text = text;
+        this.event = event;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public ActionEvent getEvent() {
+        return event;
+    }
 
 }
