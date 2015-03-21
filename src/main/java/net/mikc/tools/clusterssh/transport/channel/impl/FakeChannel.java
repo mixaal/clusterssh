@@ -20,6 +20,9 @@ package net.mikc.tools.clusterssh.transport.channel.impl;
 import com.google.common.eventbus.EventBus;
 import java.io.IOException;
 import java.text.MessageFormat;
+
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import net.mikc.tools.clusterssh.events.OutputTerminalDataEvent;
 import net.mikc.tools.clusterssh.exceptions.ConnectionException;
 import net.mikc.tools.clusterssh.transport.channel.Channel;
@@ -32,8 +35,12 @@ import net.mikc.tools.clusterssh.transport.RemoteSession;
 public class FakeChannel implements Channel {
 
     private final EventBus receiver;
+    private final RemoteSession remoteSession;
 
-    public FakeChannel(RemoteSession session, final EventBus receiver) {
+
+    @Inject
+    FakeChannel(@Assisted final RemoteSession session, @Assisted final EventBus receiver) {
+        this.remoteSession = session;
         this.receiver = receiver;
     }
 
@@ -59,4 +66,8 @@ public class FakeChannel implements Channel {
         receiver.post(new OutputTerminalDataEvent<>(data));
     }
 
+    @Override
+    public RemoteSession getRemoteSession() {
+        return this.remoteSession;
+    }
 }

@@ -19,18 +19,17 @@
  */
 package net.mikc.tools.clusterssh.controller;
 
-import net.mikc.tools.clusterssh.databus.MessageBus;
-import net.mikc.tools.clusterssh.transport.pump.impl.ChannelSender;
+import com.google.inject.Inject;
+import net.mikc.tools.clusterssh.controller.connection.RemoteConnection;
+import net.mikc.tools.clusterssh.controller.connection.RemoteConnectionFactory;
+import net.mikc.tools.clusterssh.transport.pump.Sender;
 import com.google.common.eventbus.EventBus;
-import net.mikc.tools.clusterssh.config.Config;
 import net.mikc.tools.clusterssh.exceptions.ConnectionException;
 import net.mikc.tools.clusterssh.gui.InputWindow;
-import net.mikc.tools.clusterssh.gui.TerminalWindow;
 import net.mikc.tools.clusterssh.gui.dialogs.Alert;
-import net.mikc.tools.clusterssh.transport.channel.Channel;
 import net.mikc.tools.clusterssh.transport.RemoteSession;
-import net.mikc.tools.clusterssh.transport.channel.ChannelFactory;
-import net.mikc.tools.clusterssh.transport.channel.impl.JschSsh;
+
+import java.util.Collection;
 
 /**
  *
@@ -38,15 +37,30 @@ import net.mikc.tools.clusterssh.transport.channel.impl.JschSsh;
  */
 public class AppInitializer {
 
-    public AppInitializer() {
+    // event bus for the input window
+    private final EventBus inputMessageBus;
+    // sessions to connect with input terminal
+    private final Collection<RemoteSession> remoteSessions;
+    // factory responsible for linking input to remote targets
+    private final RemoteConnectionFactory remoteConnectionFactory;
+    // sender implementing the payload transportation between the terminal and remote targets
+    private final Sender sender;
 
+    @Inject
+    AppInitializer(
+            final EventBus inputMessageBus,
+            final Collection<RemoteSession> remoteSessions,
+            final RemoteConnectionFactory remoteConnectionFactory,
+            final Sender sender
+    ) {
+        this.inputMessageBus = inputMessageBus;
+        this.remoteSessions = remoteSessions;
+        this.remoteConnectionFactory = remoteConnectionFactory;
+        this.sender = sender;
+    }
+
+    public void start() {
         try {
-            // create an event bus for the input window
-            final EventBus inputMessageBus = MessageBus.get();
-
-            // sends the data to all channels
-            ChannelSender sender = new ChannelSender();
-
             // Connect input terminal window to the input message bus
             InputWindow input = new InputWindow(inputMessageBus);
 
@@ -54,25 +68,9 @@ public class AppInitializer {
             inputMessageBus.register(sender);
 
             // Create output terminal windows
-            for (RemoteSession session : Config.SessionList.get()) {
-                // For each remote session create a separate message bus
-                final EventBus sessionMessageBus = MessageBus.get();
-
-                // Terminal output windows
-                final TerminalWindow window = new TerminalWindow(
-                        session.getHost(),
-                        session.getUser(),
-                        Config.LookAndFeel.TERMINAL_WINDOW_SIZE
-                );
-
-                // Register output terminals on the session message bus
-                sessionMessageBus.register(window);
-
-                // create transport channel with the message bus
-                final Channel transportHandler = ChannelFactory.newChannel(session, sessionMessageBus);
-
-                // connect sender with the channels - use MessageBus!
-                sender.addChannel(transportHandler);
+            for (RemoteSession session : remoteSessions) {
+                final RemoteConnection rc = remoteConnectionFactory.create(session, sender);
+                rc.connect();
             }
 
             // and finally establish the connection

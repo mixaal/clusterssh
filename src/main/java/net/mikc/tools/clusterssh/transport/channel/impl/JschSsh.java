@@ -20,6 +20,8 @@
 package net.mikc.tools.clusterssh.transport.channel.impl;
 
 import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
@@ -86,7 +88,8 @@ public class JschSsh implements Channel {
      * @param remoteSession
      * @param receiver
      */
-    public JschSsh(final RemoteSession remoteSession, final EventBus messageBus) {
+    @Inject
+    public JschSsh(@Assisted final RemoteSession remoteSession, @Assisted final EventBus messageBus) {
         this.jsch = new JSch();
         this.remoteSession = remoteSession;
         this.messageBus = messageBus;
@@ -134,6 +137,11 @@ public class JschSsh implements Channel {
     public void finalize() throws Throwable {
         disconnect();
         super.finalize();
+    }
+
+    @Override
+    public RemoteSession getRemoteSession() {
+        return this.remoteSession;
     }
 
     class MyUserInfo implements UserInfo, UIKeyboardInteractive {

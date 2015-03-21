@@ -37,13 +37,15 @@ public class ChannelSender implements Sender {
 
     private final List<Channel> channels = new ArrayList<>();
 
-    public ChannelSender() {
+    ChannelSender() {
     }
 
+    @Override
     public void addChannel(final Channel channel) {
         channels.add(channel);
     }
 
+    @Override
     public void connect() throws ConnectionException {
         for (final Channel channel : channels) {
             channel.connect();

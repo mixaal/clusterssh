@@ -19,9 +19,9 @@
  */
 package net.mikc.tools.clusterssh.transport.channel;
 
-import com.google.common.eventbus.EventBus;
 import java.io.IOException;
 import net.mikc.tools.clusterssh.exceptions.ConnectionException;
+import net.mikc.tools.clusterssh.transport.RemoteSession;
 
 /**
  *
@@ -37,4 +37,5 @@ public interface Channel {
 
     void onDataArrival(final String data);
 
+    RemoteSession getRemoteSession();
 }

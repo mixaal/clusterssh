@@ -17,22 +17,9 @@
  *   with this program; if not, write to the Free Software Foundation, Inc.,
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package net.mikc.tools.clusterssh;
+package net.mikc.tools.clusterssh.controller.connection;
 
-import com.google.inject.Guice;
-import net.mikc.tools.clusterssh.controller.AppInitializer;
-import net.mikc.tools.clusterssh.controller.modules.ApplicationModule;
 
-/**
- *
- * @author mikc
- */
-public class Main {
-
-    public static void main(String args[]) {
-
-        AppInitializer app = Guice.createInjector(new ApplicationModule()).getInstance(AppInitializer.class);
-        app.start();
-
-    }
+public interface RemoteConnection {
+    public void connect();
 }

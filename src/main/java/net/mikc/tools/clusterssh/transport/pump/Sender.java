@@ -17,7 +17,8 @@
  */
 package net.mikc.tools.clusterssh.transport.pump;
 
-import com.google.common.eventbus.EventBus;
+import net.mikc.tools.clusterssh.exceptions.ConnectionException;
+import net.mikc.tools.clusterssh.transport.channel.Channel;
 
 /**
  *
@@ -26,5 +27,7 @@ import com.google.common.eventbus.EventBus;
 public interface Sender {
 
     void send(final String data);
+    void addChannel(final Channel channel);
+    void connect() throws ConnectionException;
 
 }

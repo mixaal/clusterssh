@@ -25,9 +25,6 @@ import net.mikc.tools.clusterssh.transport.channel.impl.JschSsh;
  *
  * @author mikc
  */
-public final class ChannelFactory {
-
-    public static Channel newChannel(final RemoteSession session, final EventBus bus) {
-        return new JschSsh(session, bus);
-    }
+public interface ChannelFactory {
+     Channel create(final RemoteSession session, final EventBus bus);
 }
