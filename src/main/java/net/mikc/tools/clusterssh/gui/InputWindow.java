@@ -43,8 +43,7 @@ public class InputWindow extends TextAreaWindow {
     public InputWindow(final EventBus messageBus) {
         super(
                 PROMPT_TITLE,
-                Config.LookAndFeel.INPUT_WINDOW_SIZE.width,
-                Config.LookAndFeel.INPUT_WINDOW_SIZE.height,
+                Config.LookAndFeel.INPUT_WINDOW_SIZE,
                 true,
                 false
         );

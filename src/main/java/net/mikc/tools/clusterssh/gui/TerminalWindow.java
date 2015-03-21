@@ -24,6 +24,8 @@ import net.mikc.tools.clusterssh.config.Config;
 import net.mikc.tools.clusterssh.events.OutputTerminalDataEvent;
 import net.mikc.tools.clusterssh.gui.domain.Appearance;
 
+import java.awt.*;
+
 /**
  *
  * @author mikc
@@ -32,7 +34,7 @@ public final class TerminalWindow extends TextAreaWindow {
 
     private final String title;
     private final String host, user;
-    private final int width, height;
+    private final Dimension dimension;
 
     private String userMark() {
         return (isRoot()) ? " # " : " $ ";
@@ -48,13 +50,12 @@ public final class TerminalWindow extends TextAreaWindow {
                 : Config.LookAndFeel.USER_APPEARANCE;
     }
 
-    public TerminalWindow(final String host, final String user, int width, int height) {
-        super(user + "@" + host, width, height, false, false);
+    public TerminalWindow(final String host, final String user, final Dimension dimension) {
+        super(user + "@" + host, dimension, false, false);
         this.title = getTitle();
         this.user = user;
         this.host = host;
-        this.width = width;
-        this.height = height;
+        this.dimension = dimension;
         setAppearance(getAppearance());
     }
 
@@ -63,11 +64,11 @@ public final class TerminalWindow extends TextAreaWindow {
     }
 
     public int getTerminalWidth() {
-        return this.width;
+        return this.dimension.width;
     }
 
     public int getTerminalHeight() {
-        return this.height;
+        return this.dimension.height;
     }
 
     public String getTerminalTitle() {

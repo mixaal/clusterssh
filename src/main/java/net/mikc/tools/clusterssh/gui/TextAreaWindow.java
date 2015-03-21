@@ -38,11 +38,12 @@ class TextAreaWindow extends JFrame {
 
     public TextAreaWindow(
             final String title,
-            final int width,
-            final int height,
+            final Dimension dimension,
             final boolean editable,
             final boolean resizeable) {
         super(title);
+        final int width = dimension.width;
+        final int height = dimension.height;
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(resizeable);
 

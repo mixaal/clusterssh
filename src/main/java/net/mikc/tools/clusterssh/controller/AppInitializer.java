@@ -62,8 +62,7 @@ public class AppInitializer {
                 final TerminalWindow window = new TerminalWindow(
                         session.getHost(),
                         session.getUser(),
-                        Config.LookAndFeel.TERMINAL_WINDOW_SIZE.width,
-                        Config.LookAndFeel.TERMINAL_WINDOW_SIZE.height
+                        Config.LookAndFeel.TERMINAL_WINDOW_SIZE
                 );
 
                 // Register output terminals on the session message bus
