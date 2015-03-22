@@ -17,24 +17,22 @@
  *   with this program; if not, write to the Free Software Foundation, Inc.,
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package net.mikc.tools.clusterssh.gui.dialogs;
+package net.mikc.tools.clusterssh.gui.dialogs.impl;
+
+import com.google.inject.Inject;
+import net.mikc.tools.clusterssh.gui.dialogs.AlertDialog;
 
 import javax.swing.JOptionPane;
 
-/**
- *
- * @author mikc
- */
-public class Alert {
+public class SwingAlertDialog implements AlertDialog {
 
-    private final String message;
+    @Inject
+    SwingAlertDialog() {
 
-    public Alert(final String message) {
-        this.message = message;
     }
 
-    public void display() {
+    @Override
+    public void display(final String message) {
         JOptionPane.showMessageDialog(null, message);
     }
-
 }

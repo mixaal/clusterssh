@@ -19,29 +19,13 @@
  */
 package net.mikc.tools.clusterssh.gui.dialogs;
 
-import javax.swing.JOptionPane;
-
 /**
  *
  * @author mikc
  */
-public class PromptYesNo {
+public interface PromptDialog {
 
-    private final String message;
-    private int answer;
+    PromptDialog display(String message);
 
-    public PromptYesNo(final String message) {
-        this.message = message;
-
-    }
-
-    public PromptYesNo display() {
-        answer = JOptionPane.showOptionDialog(null, message, "action", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-        return this;
-    }
-
-    public boolean getValue() {
-        return answer == 0;
-    }
-
+    boolean getValue();
 }

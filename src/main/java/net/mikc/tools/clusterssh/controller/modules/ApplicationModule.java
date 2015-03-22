@@ -28,6 +28,13 @@ import net.mikc.tools.clusterssh.controller.connection.RemoteConnection;
 import net.mikc.tools.clusterssh.controller.connection.RemoteConnectionFactory;
 import net.mikc.tools.clusterssh.controller.connection.impl.RemoteTerminalConnection;
 import net.mikc.tools.clusterssh.controller.providers.MessageBusProvider;
+import net.mikc.tools.clusterssh.gui.dialogs.AlertDialog;
+import net.mikc.tools.clusterssh.gui.dialogs.PasswordDialog;
+import net.mikc.tools.clusterssh.gui.dialogs.PasswordDialogFactory;
+import net.mikc.tools.clusterssh.gui.dialogs.PromptDialog;
+import net.mikc.tools.clusterssh.gui.dialogs.impl.SwingAlertDialog;
+import net.mikc.tools.clusterssh.gui.dialogs.impl.SwingPasswordDialog;
+import net.mikc.tools.clusterssh.gui.dialogs.impl.SwingPromptDialog;
 import net.mikc.tools.clusterssh.gui.user.impl.SwingUserInput;
 import net.mikc.tools.clusterssh.gui.user.impl.WindowedTerminal;
 import net.mikc.tools.clusterssh.gui.window.Window;
@@ -52,6 +59,11 @@ public class ApplicationModule extends AbstractModule{
         bind(new TypeLiteral<Collection<RemoteSession>>(){}).toInstance(Config.SessionList.get());
         bind(EventBus.class).toProvider(MessageBusProvider.class);
         bind(Sender.class).to(ChannelSender.class);
+        bind(AlertDialog.class).to(SwingAlertDialog.class);
+        bind(PromptDialog.class).to(SwingPromptDialog.class);
+        install(
+                new FactoryModuleBuilder().implement(PasswordDialog.class, SwingPasswordDialog.class).build(PasswordDialogFactory.class)
+        );
         install(
                 new FactoryModuleBuilder().implement(Channel.class, JschSsh.class).build(ChannelFactory.class)
         );

@@ -27,7 +27,7 @@ import net.mikc.tools.clusterssh.transport.pump.Sender;
 import com.google.common.eventbus.EventBus;
 import net.mikc.tools.clusterssh.exceptions.ConnectionException;
 import net.mikc.tools.clusterssh.gui.user.UserInput;
-import net.mikc.tools.clusterssh.gui.dialogs.Alert;
+import net.mikc.tools.clusterssh.gui.dialogs.AlertDialog;
 import net.mikc.tools.clusterssh.transport.RemoteSession;
 
 import java.util.ArrayList;
@@ -52,6 +52,8 @@ public class AppInitializer {
     private final UserInputFactory userInputFactory;
     // input window
     private UserInput input;
+    // alert dialog window
+    private final AlertDialog alertDialog;
 
     private List<RemoteConnection> remoteConnections = new ArrayList<>();
 
@@ -62,13 +64,15 @@ public class AppInitializer {
             final Collection<RemoteSession> remoteSessions,
             final Sender sender,
             final RemoteConnectionFactory remoteConnectionFactory,
-            final UserInputFactory userInputFactory
+            final UserInputFactory userInputFactory,
+            final AlertDialog alertDialog
     ) {
         this.inputMessageBus = inputMessageBus;
         this.remoteSessions = remoteSessions;
         this.sender = sender;
         this.remoteConnectionFactory = remoteConnectionFactory;
         this.userInputFactory = userInputFactory;
+        this.alertDialog = alertDialog;
     }
 
     UserInput getInputWindow() {
@@ -97,7 +101,7 @@ public class AppInitializer {
             // and finally establish the connection
             sender.connect();
         } catch (ConnectionException ex) {
-            new Alert(ex.getLocalizedMessage()).display();
+            this.alertDialog.display(ex.getLocalizedMessage());
             System.exit(-1);
         }
 

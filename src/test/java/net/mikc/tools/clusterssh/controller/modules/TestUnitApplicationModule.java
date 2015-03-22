@@ -27,6 +27,8 @@ import net.mikc.tools.clusterssh.controller.connection.RemoteConnection;
 import net.mikc.tools.clusterssh.controller.connection.RemoteConnectionFactory;
 import net.mikc.tools.clusterssh.controller.connection.impl.RemoteTerminalConnection;
 import net.mikc.tools.clusterssh.controller.providers.MessageBusProvider;
+import net.mikc.tools.clusterssh.gui.dialogs.AlertDialog;
+import net.mikc.tools.clusterssh.gui.dialogs.impl.ConsoleAlertDialog;
 import net.mikc.tools.clusterssh.gui.user.UserInput;
 import net.mikc.tools.clusterssh.gui.user.UserInputFactory;
 import net.mikc.tools.clusterssh.gui.user.UserTerminalFactory;
@@ -59,6 +61,7 @@ public class TestUnitApplicationModule extends AbstractModule {
         }).toInstance(sessions);
         bind(EventBus.class).toProvider(MessageBusProvider.class);
         bind(Sender.class).to(ChannelSender.class);
+        bind(AlertDialog.class).to(ConsoleAlertDialog.class);
         install(
                 new FactoryModuleBuilder().implement(Channel.class, FakeSsh.class).build(ChannelFactory.class)
         );

@@ -32,9 +32,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import net.mikc.tools.clusterssh.events.OutputTerminalDataEvent;
 import net.mikc.tools.clusterssh.exceptions.ConnectionException;
-import net.mikc.tools.clusterssh.gui.dialogs.Alert;
-import net.mikc.tools.clusterssh.gui.dialogs.AskPassword;
-import net.mikc.tools.clusterssh.gui.dialogs.PromptYesNo;
+import net.mikc.tools.clusterssh.gui.dialogs.AlertDialog;
+import net.mikc.tools.clusterssh.gui.dialogs.PasswordDialogFactory;
+import net.mikc.tools.clusterssh.gui.dialogs.PromptDialog;
 import net.mikc.tools.clusterssh.transport.channel.Channel;
 import net.mikc.tools.clusterssh.transport.RemoteSession;
 
@@ -48,9 +48,11 @@ public class JschSsh implements Channel {
     private com.jcraft.jsch.Channel channel;
     private final JSch jsch;
     private final RemoteSession remoteSession;
-    //private final InputStream channelIn;
     private OutputStream channelOut;
     private final EventBus messageBus;
+    private final PasswordDialogFactory passwordDialogFactory;
+    private final PromptDialog promptDialog;
+    private final AlertDialog alertDialog;
 
     public class ReadDataFromChannel implements Runnable {
 
@@ -89,10 +91,18 @@ public class JschSsh implements Channel {
      * @param receiver
      */
     @Inject
-    public JschSsh(@Assisted final RemoteSession remoteSession, @Assisted final EventBus messageBus) {
+    public JschSsh(
+            final PasswordDialogFactory passwordDialogFactory,
+            final PromptDialog promptDialog,
+            final AlertDialog alertDialog,
+            @Assisted final RemoteSession remoteSession,
+            @Assisted final EventBus messageBus) {
         this.jsch = new JSch();
         this.remoteSession = remoteSession;
         this.messageBus = messageBus;
+        this.passwordDialogFactory = passwordDialogFactory;
+        this.promptDialog = promptDialog;
+        this.alertDialog = alertDialog;
     }
 
     @Override
@@ -102,7 +112,13 @@ public class JschSsh implements Channel {
             if (!remoteSession.askPassword()) {
                 this.session.setPassword(remoteSession.getPassword());
             }
-            this.session.setUserInfo(new MyUserInfo());
+            this.session.setUserInfo(
+                    new MyUserInfo(
+                            this.passwordDialogFactory,
+                            this.promptDialog,
+                            this.alertDialog
+                    )
+            );
             this.session.connect();
 
             this.channel = this.session.openChannel("shell");
@@ -146,6 +162,20 @@ public class JschSsh implements Channel {
 
     class MyUserInfo implements UserInfo, UIKeyboardInteractive {
 
+        private final PasswordDialogFactory passwordDialogFactory;
+        private final PromptDialog promptDialog;
+        private final AlertDialog alertDialog;
+
+        MyUserInfo(
+                final PasswordDialogFactory passwordDialogFactory,
+                final PromptDialog promptDialog,
+                final AlertDialog alertDialog
+        ) {
+            this.passwordDialogFactory = passwordDialogFactory;
+            this.promptDialog = promptDialog;
+            this.alertDialog = alertDialog;
+        }
+
         @Override
         public String getPassphrase() {
             return null;
@@ -153,7 +183,7 @@ public class JschSsh implements Channel {
 
         @Override
         public String getPassword() {
-            return new AskPassword(remoteSession.getHost()).display().getPassword();
+            return this.passwordDialogFactory.create(remoteSession.getHost()).display().getPassword();
         }
 
         @Override
@@ -168,12 +198,12 @@ public class JschSsh implements Channel {
 
         @Override
         public boolean promptYesNo(String message) {
-            return new PromptYesNo(message).display().getValue();
+            return promptDialog.display(message).getValue();
         }
 
         @Override
-        public void showMessage(String string) {
-            new Alert(string).display();
+        public void showMessage(String message) {
+            this.alertDialog.display(message);
         }
 
         @Override
