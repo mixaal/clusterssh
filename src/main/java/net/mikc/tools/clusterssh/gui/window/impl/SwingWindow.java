@@ -34,16 +34,16 @@ import javax.swing.text.DefaultCaret;
  *
  * @author mikc
  */
-public class TextAreaWindow extends JFrame implements Window {
+public class SwingWindow extends JFrame implements Window {
 
     private final JTextArea textArea;
 
     @AssistedInject
-    TextAreaWindow(
+    SwingWindow(
             @Assisted final String title,
             @Assisted final Dimension dimension,
             @Assisted final WindowOptions options
-            ) {
+    ) {
         super(title);
         final int width = dimension.width;
         final int height = dimension.height;

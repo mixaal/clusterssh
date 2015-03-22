@@ -32,7 +32,7 @@ import net.mikc.tools.clusterssh.gui.user.impl.SwingUserInput;
 import net.mikc.tools.clusterssh.gui.user.impl.WindowedTerminal;
 import net.mikc.tools.clusterssh.gui.window.Window;
 import net.mikc.tools.clusterssh.gui.window.WindowFactory;
-import net.mikc.tools.clusterssh.gui.window.impl.TextAreaWindow;
+import net.mikc.tools.clusterssh.gui.window.impl.SwingWindow;
 import net.mikc.tools.clusterssh.gui.user.UserInputFactory;
 import net.mikc.tools.clusterssh.gui.user.UserTerminalFactory;
 import net.mikc.tools.clusterssh.gui.user.UserInput;
@@ -59,7 +59,7 @@ public class ApplicationModule extends AbstractModule{
                 new FactoryModuleBuilder().implement(RemoteConnection.class, RemoteTerminalConnection.class).build(RemoteConnectionFactory.class)
         );
         install(
-                new FactoryModuleBuilder().implement(Window.class, TextAreaWindow.class).build(WindowFactory.class)
+                new FactoryModuleBuilder().implement(Window.class, SwingWindow.class).build(WindowFactory.class)
         );
         install(
                 new FactoryModuleBuilder().implement(UserInput.class, SwingUserInput.class).build(UserInputFactory.class)
