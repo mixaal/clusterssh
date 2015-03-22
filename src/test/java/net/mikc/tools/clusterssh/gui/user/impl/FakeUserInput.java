@@ -22,17 +22,17 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import net.mikc.tools.clusterssh.config.Config;
 import net.mikc.tools.clusterssh.events.InputWindowEvent;
-import net.mikc.tools.clusterssh.gui.user.InputWindow;
+import net.mikc.tools.clusterssh.gui.user.UserInput;
 import net.mikc.tools.clusterssh.gui.window.Window;
 import net.mikc.tools.clusterssh.gui.window.WindowFactory;
 import net.mikc.tools.clusterssh.gui.window.WindowOptions;
 
-public class FakeInputWindow implements InputWindow {
+public class FakeUserInput implements UserInput {
     private final EventBus messageBus;
     private final Window window;
 
     @Inject
-    FakeInputWindow(final WindowFactory windowFactory, @Assisted EventBus messageBus) {
+    FakeUserInput(final WindowFactory windowFactory, @Assisted EventBus messageBus) {
         this.messageBus = messageBus;
         this.window = windowFactory.create("Input Window", Config.LookAndFeel.INPUT_WINDOW_SIZE, new WindowOptions(true, false));
     }

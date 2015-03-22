@@ -17,12 +17,27 @@
  *   with this program; if not, write to the Free Software Foundation, Inc.,
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package net.mikc.tools.clusterssh.controller.connection;
+package net.mikc.tools.clusterssh.gui.user;
 
+import net.mikc.tools.clusterssh.events.OutputTerminalDataEvent;
+import net.mikc.tools.clusterssh.gui.window.Window;
 
-import net.mikc.tools.clusterssh.gui.user.UserTerminal;
+/**
+ *
+ * @author mikc
+ */
+public interface UserTerminal {
 
-public interface RemoteConnection {
-    public void connect();
-    UserTerminal getUserTerminal();
+    public void appendText(final String text);
+
+    public int getTerminalWidth();
+
+    public int getTerminalHeight();
+
+    public String getTerminalTitle();
+
+    public Window getWindow();
+
+    public <T extends Object> void onDataArrival(OutputTerminalDataEvent<T> evt);
+
 }

@@ -19,8 +19,10 @@
  */
 package net.mikc.tools.clusterssh.gui.user;
 
-import com.google.common.eventbus.EventBus;
+import com.google.inject.assistedinject.Assisted;
 
-public interface InputWindowFactory {
-    InputWindow create(EventBus eventBus);
+import java.awt.*;
+
+public interface UserTerminalFactory {
+    UserTerminal create(@Assisted("host") String host, @Assisted("user") String user, Dimension size);
 }

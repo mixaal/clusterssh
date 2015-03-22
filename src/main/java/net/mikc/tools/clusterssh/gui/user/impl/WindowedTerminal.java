@@ -25,18 +25,12 @@ import com.google.inject.assistedinject.AssistedInject;
 import net.mikc.tools.clusterssh.config.Config;
 import net.mikc.tools.clusterssh.events.OutputTerminalDataEvent;
 import net.mikc.tools.clusterssh.gui.domain.Appearance;
-import net.mikc.tools.clusterssh.gui.window.Window;
-import net.mikc.tools.clusterssh.gui.window.WindowFactory;
-import net.mikc.tools.clusterssh.gui.window.WindowOptions;
+import net.mikc.tools.clusterssh.gui.user.UserTerminal;
+import net.mikc.tools.clusterssh.gui.window.*;
 
 import java.awt.Dimension;
 
-/**
- *
- * @author mikc
- */
-public final class TerminalWindow {
-
+public class WindowedTerminal implements UserTerminal {
     private final String title;
     private final String host, user;
     private final Dimension dimension;
@@ -57,7 +51,7 @@ public final class TerminalWindow {
     }
 
     @AssistedInject
-    TerminalWindow(
+    WindowedTerminal(
             final WindowFactory windowFactory,
             @Assisted("host") final String host,
             @Assisted("user") final String user,
@@ -86,7 +80,7 @@ public final class TerminalWindow {
         return this.title;
     }
 
-    public Window getWindow() {
+    public net.mikc.tools.clusterssh.gui.window.Window getWindow() {
         return this.window;
     }
 

@@ -24,7 +24,7 @@ import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 import net.mikc.tools.clusterssh.config.Config;
 import net.mikc.tools.clusterssh.events.InputWindowEvent;
-import net.mikc.tools.clusterssh.gui.user.InputWindow;
+import net.mikc.tools.clusterssh.gui.user.UserInput;
 import net.mikc.tools.clusterssh.gui.window.Window;
 import net.mikc.tools.clusterssh.gui.window.WindowFactory;
 import net.mikc.tools.clusterssh.gui.window.WindowOptions;
@@ -33,7 +33,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-public class SwingInputWindow implements InputWindow {
+public class SwingUserInput implements UserInput {
 
     private static final String PROMPT_TITLE = "Input Prompt";
 
@@ -41,7 +41,7 @@ public class SwingInputWindow implements InputWindow {
     private final Window window;
 
     @AssistedInject
-    SwingInputWindow(final WindowFactory windowFactory, @Assisted final EventBus messageBus) {
+    SwingUserInput(final WindowFactory windowFactory, @Assisted final EventBus messageBus) {
         this.window = windowFactory.create(PROMPT_TITLE, Config.LookAndFeel.INPUT_WINDOW_SIZE, new WindowOptions(true, false));
         this.messageBus = messageBus;
 

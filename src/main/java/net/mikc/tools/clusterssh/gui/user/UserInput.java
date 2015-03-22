@@ -23,6 +23,6 @@ package net.mikc.tools.clusterssh.gui.user;
  *
  * @author mikc
  */
-public interface InputWindow  {
+public interface UserInput {
     void sendInput(String text);
 }

@@ -28,14 +28,15 @@ import net.mikc.tools.clusterssh.controller.connection.RemoteConnection;
 import net.mikc.tools.clusterssh.controller.connection.RemoteConnectionFactory;
 import net.mikc.tools.clusterssh.controller.connection.impl.RemoteTerminalConnection;
 import net.mikc.tools.clusterssh.controller.providers.MessageBusProvider;
-import net.mikc.tools.clusterssh.gui.user.impl.SwingInputWindow;
+import net.mikc.tools.clusterssh.gui.user.impl.SwingUserInput;
+import net.mikc.tools.clusterssh.gui.user.impl.WindowedTerminal;
 import net.mikc.tools.clusterssh.gui.window.Window;
 import net.mikc.tools.clusterssh.gui.window.WindowFactory;
 import net.mikc.tools.clusterssh.gui.window.impl.TextAreaWindow;
-import net.mikc.tools.clusterssh.gui.user.InputWindowFactory;
-import net.mikc.tools.clusterssh.gui.user.TerminalWindowFactory;
-import net.mikc.tools.clusterssh.gui.user.InputWindow;
-import net.mikc.tools.clusterssh.gui.user.impl.TerminalWindow;
+import net.mikc.tools.clusterssh.gui.user.UserInputFactory;
+import net.mikc.tools.clusterssh.gui.user.UserTerminalFactory;
+import net.mikc.tools.clusterssh.gui.user.UserInput;
+import net.mikc.tools.clusterssh.gui.user.UserTerminal;
 import net.mikc.tools.clusterssh.transport.RemoteSession;
 import net.mikc.tools.clusterssh.transport.channel.Channel;
 import net.mikc.tools.clusterssh.transport.channel.ChannelFactory;
@@ -61,10 +62,10 @@ public class ApplicationModule extends AbstractModule{
                 new FactoryModuleBuilder().implement(Window.class, TextAreaWindow.class).build(WindowFactory.class)
         );
         install(
-                new FactoryModuleBuilder().implement(InputWindow.class, SwingInputWindow.class).build(InputWindowFactory.class)
+                new FactoryModuleBuilder().implement(UserInput.class, SwingUserInput.class).build(UserInputFactory.class)
         );
         install(
-                new FactoryModuleBuilder().implement(TerminalWindow.class, TerminalWindow.class).build(TerminalWindowFactory.class)
+                new FactoryModuleBuilder().implement(UserTerminal.class, WindowedTerminal.class).build(UserTerminalFactory.class)
         );
 
     }
