@@ -17,12 +17,10 @@
  *   with this program; if not, write to the Free Software Foundation, Inc.,
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package net.mikc.tools.clusterssh.controller.connection;
+package net.mikc.tools.clusterssh.gui.user;
 
+import com.google.common.eventbus.EventBus;
 
-import net.mikc.tools.clusterssh.gui.user.impl.TerminalWindow;
-
-public interface RemoteConnection {
-    public void connect();
-    TerminalWindow getTerminalWindow();
+public interface InputWindowFactory {
+    InputWindow create(EventBus eventBus);
 }

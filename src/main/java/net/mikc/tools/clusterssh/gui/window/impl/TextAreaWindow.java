@@ -17,35 +17,38 @@
  *   with this program; if not, write to the Free Software Foundation, Inc.,
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package net.mikc.tools.clusterssh.gui;
+package net.mikc.tools.clusterssh.gui.window.impl;
 
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
+import net.mikc.tools.clusterssh.gui.window.Window;
 import net.mikc.tools.clusterssh.gui.domain.Appearance;
+import net.mikc.tools.clusterssh.gui.window.WindowOptions;
+
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 
 /**
  *
  * @author mikc
  */
-class TextAreaWindow extends JFrame {
+public class TextAreaWindow extends JFrame implements Window {
 
-    protected final JTextArea textArea;
+    private final JTextArea textArea;
 
-    public TextAreaWindow(
-            final String title,
-            final Dimension dimension,
-            final boolean editable,
-            final boolean resizeable) {
+    @AssistedInject
+    TextAreaWindow(
+            @Assisted final String title,
+            @Assisted final Dimension dimension,
+            @Assisted final WindowOptions options
+            ) {
         super(title);
         final int width = dimension.width;
         final int height = dimension.height;
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setResizable(resizeable);
+        this.setResizable(options.getResizable());
 
         this.setSize(width, height);
 
@@ -56,7 +59,7 @@ class TextAreaWindow extends JFrame {
         scrollPane.setPreferredSize(new Dimension(width, height));
         textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
-        textArea.setEditable(editable);
+        textArea.setEditable(options.getEditable());
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         this.setLayout(new FlowLayout());
         this.add(scrollPane, SwingConstants.CENTER);
@@ -64,10 +67,35 @@ class TextAreaWindow extends JFrame {
         this.setVisible(true);
         this.setLayout(new FlowLayout());
         this.add(scrollPane);
-
     }
 
-    void setAppearance(final Appearance appearance) {
+    @Override
+    public InputMap getInputMap(int condition) {
+        return textArea.getInputMap(condition);
+    }
+
+    @Override
+    public ActionMap getActionMap() {
+        return textArea.getActionMap();
+    }
+
+    @Override
+    public void setText(String text) {
+        textArea.setText(text);
+    }
+
+    @Override
+    public String getText() {
+        return textArea.getText();
+    }
+
+    @Override
+    public void appendText(String text) {
+        textArea.append(text);
+    }
+
+    @Override
+    public void setAppearance(final Appearance appearance) {
         textArea.setFont(appearance.getFont());
         textArea.setBackground(appearance.getBackground());
         textArea.setForeground(appearance.getForeground());

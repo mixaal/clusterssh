@@ -17,41 +17,39 @@
  *   with this program; if not, write to the Free Software Foundation, Inc.,
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package net.mikc.tools.clusterssh.gui;
+package net.mikc.tools.clusterssh.gui.user.impl;
 
 import com.google.common.eventbus.EventBus;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
-import javax.swing.InputMap;
-import javax.swing.JComponent;
-import javax.swing.KeyStroke;
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
 import net.mikc.tools.clusterssh.config.Config;
 import net.mikc.tools.clusterssh.events.InputWindowEvent;
+import net.mikc.tools.clusterssh.gui.user.InputWindow;
+import net.mikc.tools.clusterssh.gui.window.Window;
+import net.mikc.tools.clusterssh.gui.window.WindowFactory;
+import net.mikc.tools.clusterssh.gui.window.WindowOptions;
 
-/**
- *
- * @author mikc
- */
-public class InputWindow extends TextAreaWindow {
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+
+public class SwingInputWindow implements InputWindow {
 
     private static final String PROMPT_TITLE = "Input Prompt";
 
     private final EventBus messageBus;
+    private final Window window;
 
-    public InputWindow(final EventBus messageBus) {
-        super(
-                PROMPT_TITLE,
-                Config.LookAndFeel.INPUT_WINDOW_SIZE,
-                true,
-                false
-        );
+    @AssistedInject
+    SwingInputWindow(final WindowFactory windowFactory, @Assisted final EventBus messageBus) {
+        this.window = windowFactory.create(PROMPT_TITLE, Config.LookAndFeel.INPUT_WINDOW_SIZE, new WindowOptions(true, false));
         this.messageBus = messageBus;
 
-        setAppearance(Config.LookAndFeel.INPUT_APPEARANCE);
-        InputMap inputMap = textArea.getInputMap(JComponent.WHEN_FOCUSED);
-        ActionMap actionMap = textArea.getActionMap();
+
+
+        this.window.setAppearance(Config.LookAndFeel.INPUT_APPEARANCE);
+        InputMap inputMap = window.getInputMap(JComponent.WHEN_FOCUSED);
+        ActionMap actionMap = window.getActionMap();
 
         // the key stroke we want to capture
         KeyStroke enterStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
@@ -66,8 +64,8 @@ public class InputWindow extends TextAreaWindow {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                final String userText = textArea.getText();
-                textArea.setText("");
+                final String userText = window.getText();
+                window.setText("");
                 messageBus.post(new InputWindowEvent(userText, e));
             }
 
@@ -78,9 +76,14 @@ public class InputWindow extends TextAreaWindow {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                textArea.append(" \\\n");
+                window.appendText(" \\\n");
             }
         });
+
+    }
+
+    @Override
+    public void sendInput(final String text) {
 
     }
 }

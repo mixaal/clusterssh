@@ -17,12 +17,22 @@
  *   with this program; if not, write to the Free Software Foundation, Inc.,
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package net.mikc.tools.clusterssh.controller.connection;
+package net.mikc.tools.clusterssh.gui.window;
 
+public class WindowOptions {
+    private final Boolean editable;
+    private final Boolean resizable;
 
-import net.mikc.tools.clusterssh.gui.user.impl.TerminalWindow;
+    public WindowOptions(final Boolean editable, final Boolean resizable) {
+        this.resizable = resizable;
+        this.editable = editable;
+    }
 
-public interface RemoteConnection {
-    public void connect();
-    TerminalWindow getTerminalWindow();
+    public Boolean getEditable() {
+        return editable;
+    }
+
+    public Boolean getResizable() {
+        return resizable;
+    }
 }

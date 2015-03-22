@@ -25,7 +25,8 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import net.mikc.tools.clusterssh.config.Config;
 import net.mikc.tools.clusterssh.controller.connection.RemoteConnection;
-import net.mikc.tools.clusterssh.gui.TerminalWindow;
+import net.mikc.tools.clusterssh.gui.user.TerminalWindowFactory;
+import net.mikc.tools.clusterssh.gui.user.impl.TerminalWindow;
 import net.mikc.tools.clusterssh.transport.RemoteSession;
 import net.mikc.tools.clusterssh.transport.channel.Channel;
 import net.mikc.tools.clusterssh.transport.channel.ChannelFactory;
@@ -40,11 +41,16 @@ public class RemoteTerminalConnection implements RemoteConnection {
     private final Channel channel;
     // Channel sender
     private final Sender channelSender;
+    // Terminal window factory
+    private final TerminalWindowFactory terminalWindowFactory;
+    // terminal window itself
+    private final TerminalWindow terminalWindow;
 
     @Inject
     RemoteTerminalConnection(
             final EventBus eventBus,
             final ChannelFactory channelFactory,
+            final TerminalWindowFactory terminalWindowFactory,
             @Assisted final RemoteSession remoteSession,
             @Assisted final Sender channelSender
     ) {
@@ -52,18 +58,23 @@ public class RemoteTerminalConnection implements RemoteConnection {
         this.remoteSession = remoteSession;
         this.channelSender = channelSender;
         this.channel = channelFactory.create(remoteSession, eventBus);
-    }
-
-    public void connect() {
-        final RemoteSession remoteSession = channel.getRemoteSession();
+        this.terminalWindowFactory = terminalWindowFactory;
         // Terminal output windows
-        final TerminalWindow window = new TerminalWindow(
+        this.terminalWindow = terminalWindowFactory.create(
                 remoteSession.getHost(),
                 remoteSession.getUser(),
                 Config.LookAndFeel.TERMINAL_WINDOW_SIZE
         );
+    }
+
+    @Override
+    public TerminalWindow getTerminalWindow() {
+        return this.terminalWindow;
+    }
+
+    public void connect() {
         // Register output terminals on the session message bus
-        eventBus.register(window);
+        eventBus.register(this.terminalWindow);
         // connect sender with the channels - use MessageBus!
         channelSender.addChannel(channel);
     }

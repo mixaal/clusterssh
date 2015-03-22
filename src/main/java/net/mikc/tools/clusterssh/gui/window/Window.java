@@ -17,12 +17,18 @@
  *   with this program; if not, write to the Free Software Foundation, Inc.,
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package net.mikc.tools.clusterssh.controller.connection;
+package net.mikc.tools.clusterssh.gui.window;
 
+import net.mikc.tools.clusterssh.gui.domain.Appearance;
 
-import net.mikc.tools.clusterssh.gui.user.impl.TerminalWindow;
+import javax.swing.*;
 
-public interface RemoteConnection {
-    public void connect();
-    TerminalWindow getTerminalWindow();
+public interface Window {
+    void setAppearance(final Appearance appearance);
+    InputMap getInputMap(int condition);
+    ActionMap getActionMap();
+    void setText(final String text);
+    String getText();
+    void appendText(final String text);
+    String getTitle();
 }

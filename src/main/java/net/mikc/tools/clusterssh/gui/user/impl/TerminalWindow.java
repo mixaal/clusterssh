@@ -17,24 +17,30 @@
  *   with this program; if not, write to the Free Software Foundation, Inc.,
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package net.mikc.tools.clusterssh.gui;
+package net.mikc.tools.clusterssh.gui.user.impl;
 
 import com.google.common.eventbus.Subscribe;
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
 import net.mikc.tools.clusterssh.config.Config;
 import net.mikc.tools.clusterssh.events.OutputTerminalDataEvent;
 import net.mikc.tools.clusterssh.gui.domain.Appearance;
+import net.mikc.tools.clusterssh.gui.window.Window;
+import net.mikc.tools.clusterssh.gui.window.WindowFactory;
+import net.mikc.tools.clusterssh.gui.window.WindowOptions;
 
-import java.awt.*;
+import java.awt.Dimension;
 
 /**
  *
  * @author mikc
  */
-public final class TerminalWindow extends TextAreaWindow {
+public final class TerminalWindow {
 
     private final String title;
     private final String host, user;
     private final Dimension dimension;
+    private final Window window;
 
     private String userMark() {
         return (isRoot()) ? " # " : " $ ";
@@ -50,17 +56,22 @@ public final class TerminalWindow extends TextAreaWindow {
                 : Config.LookAndFeel.USER_APPEARANCE;
     }
 
-    public TerminalWindow(final String host, final String user, final Dimension dimension) {
-        super(user + "@" + host, dimension, false, false);
-        this.title = getTitle();
+    @AssistedInject
+    TerminalWindow(
+            final WindowFactory windowFactory,
+            @Assisted("host") final String host,
+            @Assisted("user") final String user,
+            @Assisted final Dimension dimension) {
+        this.window = windowFactory.create(user + "@" + host, dimension, new WindowOptions(false, false));
+        this.title = this.window.getTitle();
         this.user = user;
         this.host = host;
         this.dimension = dimension;
-        setAppearance(getAppearance());
+        this.window.setAppearance(getAppearance());
     }
 
     public void appendText(final String text) {
-        textArea.append(text);
+        this.window.appendText(text);
     }
 
     public int getTerminalWidth() {
@@ -73,6 +84,10 @@ public final class TerminalWindow extends TextAreaWindow {
 
     public String getTerminalTitle() {
         return this.title;
+    }
+
+    public Window getWindow() {
+        return this.window;
     }
 
     @Subscribe
